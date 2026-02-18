@@ -1,7 +1,8 @@
 # desktop moth
 
-![hjonk hjonk](./icon.png)
-
+<p align="center">
+    <img src="./icon.png" alt="Description" width="300">
+</p>
 ## Features:
 
 ### Idle States

@@ -1,8 +1,9 @@
 # desktop moth
 
 <p align="center">
-    <img src="./icon.png" alt="Description" width="300">
+    <img src="./icon.png" alt="Description" width="150">
 </p>
+
 ## Features:
 
 ### Idle States

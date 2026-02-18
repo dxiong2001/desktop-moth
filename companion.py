@@ -57,6 +57,7 @@ def companion():
     idle_default = load_frames("assets/moth-idle-default-clear")
     idle_blink = load_frames("assets/moth-idle-blink-clear")
     idle_sleepy = load_frames("assets/moth-idle-sleepy-clear")
+    idle_sleep_in = load_frames("assets/moth-idle-sleep-in-clear")
     # Resize window to sprite size
     sprite_width = idle_default[0].get_width()
     sprite_height = idle_default[0].get_height()
@@ -97,13 +98,14 @@ def companion():
             x <= mouse_x <= x + sprite_width and
             y <= mouse_y <= y + sprite_height
         )
-
         left_pressed = win32api.GetAsyncKeyState(win32con.VK_LBUTTON) < 0
-
         if over_sprite and left_pressed:
+            
             last_click_time = pygame.time.get_ticks()
 
         time_since_click = pygame.time.get_ticks() - last_click_time
+        
+                
         
         # ⭐ PROCESS EVENTS (prevents freezing)
         for event in pygame.event.get():
@@ -114,6 +116,8 @@ def companion():
             frames = idle_blink
         elif current_anim == "idle_sleepy":
             frames = idle_sleepy
+        elif current_anim == "idle_sleep_in":
+            frames = idle_sleep_in
 
         frame_index += 0.15
 
@@ -125,6 +129,9 @@ def companion():
                     current_anim = "idle_sleepy"
                     sleepy_count += 1
                     last_click_time = pygame.time.get_ticks()
+                    if sleepy_count > 1:
+                        current_anim = "idle_sleep_in"
+                        sleepy_count = 0
                 else:
                     rand = random.random()
                     if rand < 0.18:
@@ -142,11 +149,9 @@ def companion():
                     current_anim = "idle_default"
                     double_blink = False
             elif current_anim == "idle_sleepy":
-                if sleepy_count > 5:
-                    sleepy_count = 0
-                else:
-                    current_anim = "idle_default"
-
+                current_anim = "idle_default"
+            elif current_anim == "idle_sleep_in":
+                current_anim = "idle_default"
             else:
                 current_anim = "idle_default"
 

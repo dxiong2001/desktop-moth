@@ -1,5 +1,7 @@
 # desktop moth
 
+![hjonk hjonk](./icon.png)
+
 ## Features:
 
 ### Idle States

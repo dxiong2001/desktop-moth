@@ -58,6 +58,7 @@ def companion():
     idle_blink = load_frames("assets/moth-idle-blink-clear")
     idle_sleepy = load_frames("assets/moth-idle-sleepy-clear")
     idle_sleep_in = load_frames("assets/moth-idle-sleep-in-clear")
+    idle_sleep = load_frames("assets/moth-idle-sleep-clear")
     # Resize window to sprite size
     sprite_width = idle_default[0].get_width()
     sprite_height = idle_default[0].get_height()
@@ -118,6 +119,8 @@ def companion():
             frames = idle_sleepy
         elif current_anim == "idle_sleep_in":
             frames = idle_sleep_in
+        elif current_anim == "idle_sleep":
+            frames = idle_sleep
 
         frame_index += 0.15
 
@@ -125,7 +128,7 @@ def companion():
             frame_index = 0
 
             if current_anim == "idle_default":
-                if time_since_click > 35000 - (sleepy_count * 2000): 
+                if time_since_click > 5000 - (sleepy_count * 2000): 
                     current_anim = "idle_sleepy"
                     sleepy_count += 1
                     last_click_time = pygame.time.get_ticks()
@@ -151,7 +154,10 @@ def companion():
             elif current_anim == "idle_sleepy":
                 current_anim = "idle_default"
             elif current_anim == "idle_sleep_in":
-                current_anim = "idle_default"
+                current_anim = "idle_sleep"
+                frames = idle_sleep
+            elif current_anim == "idle_sleep":
+                current_anim == "idle_sleep"
             else:
                 current_anim = "idle_default"
 

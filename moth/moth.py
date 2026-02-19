@@ -6,7 +6,7 @@ class Moth:
         self.inactive_time = 0
         self.was_clicked = False
         self.spawn_zs = False
-        self.activity_level = 3
+        self.activity_level = 1
         
         
 

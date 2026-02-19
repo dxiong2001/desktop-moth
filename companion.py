@@ -17,6 +17,7 @@ from behaviors.blink import BlinkBehavior
 from behaviors.sleep import SleepBehavior
 from behaviors.sleepy import SleepyBehavior
 from behaviors.sleep_transition import SleepTransitionBehavior
+from affects.sleep_z import SleepZBehavior
 
 
 running = True
@@ -121,6 +122,7 @@ def companion():
     moth.controller.add("sleep", SleepBehavior(moth, idle_primary_sleep))
     moth.controller.add("sleep_transition", SleepTransitionBehavior(moth, idle_primary_sleep_in))
     moth.controller.add("sleepy", SleepyBehavior(moth, idle_primary_sleepy))
+    moth.controller.add_affect("sleep_z", SleepZBehavior(moth, idle_secondary_sleep_z))
     moth.controller.set("idle")
 
 
@@ -178,7 +180,7 @@ def companion():
 
             # ⭐ Update sine phase
             s["wave_offset"] += s["wave_speed"]
-        
+            
         
 
         
@@ -191,13 +193,6 @@ def companion():
         screen.fill((0, 0, 0))
         moth.update(dt, screen)
 
-        for s in secondary_particles:
-            drift_x = s["base_x"] + math.sin(s["wave_offset"]) * s["amplitude"]
-
-            frame_img = secondary_frames[int(s["frame"])].copy()
-            frame_img.set_alpha(s["alpha"])
-
-            screen.blit(frame_img, (drift_x, s["y"]))
         # screen.blit(current_frame, (0, 0))
 
         pygame.display.update()

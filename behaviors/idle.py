@@ -18,7 +18,7 @@ class IdleBehavior(Behavior):
         if self.moth.activity_level == 0:
             self.moth.controller.set("sleep_transition")
         else:
-            if self.moth.inactive_time > 10:
+            if self.moth.inactive_time > 3:
                 self.moth.controller.set("sleepy")
             else:
                 if rand < 0.18:

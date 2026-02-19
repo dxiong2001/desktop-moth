@@ -18,12 +18,12 @@ class PixelSprite:
         if self.frame:
             screen.blit(self.frame, (self.x, self.y))
 
-    def is_click_inside(self, mouse_pos):
+    def is_click_inside(self):
         """Pixel-perfect click detection."""
         if not self.frame or not self.mask:
             return False
 
-        mx, my = mouse_pos
+        mx, my = pygame.mouse.get_pos()
 
         # Convert screen coords → sprite-local coords
         rel_x = mx - self.x
@@ -32,7 +32,6 @@ class PixelSprite:
         # Bounds check first (prevents IndexError)
         if 0 <= rel_x < self.frame.get_width() and \
            0 <= rel_y < self.frame.get_height():
-
             return self.mask.get_at((rel_x, rel_y))
 
         return False

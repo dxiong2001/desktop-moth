@@ -4,7 +4,7 @@ class SleepBehavior(Behavior):
     def enter(self):
         self.moth.spawn_zs = True
 
-    def update(self):
+    def update(self, dt):
         # Wake if clicked
         if self.moth.was_clicked:
             self.moth.spawn_zs = False

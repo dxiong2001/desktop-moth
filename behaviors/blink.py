@@ -7,7 +7,7 @@ class BlinkBehavior(Behavior):
         
 
 
-    def update(self):
+    def update(self, dt):
         pass
 
     def exit(self):

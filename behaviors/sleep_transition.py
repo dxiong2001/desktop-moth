@@ -2,9 +2,9 @@ from behaviors.base import Behavior
 
 class SleepTransitionBehavior(Behavior):
     def enter(self):
-        pass
+        self.moth.activity_level = 1
 
-    def update(self):
+    def update(self, dt):
         pass
 
     def exit(self):

@@ -11,7 +11,7 @@ class Behavior(ABC):
         pass
 
     @abstractmethod
-    def update(self):
+    def update(self, dt):
         """Called every frame"""
         pass
     

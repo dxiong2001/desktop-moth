@@ -11,15 +11,15 @@ import math
 import ctypes
 from ctypes import wintypes
 from moth.sprite import PixelSprite
-from moth.moth import Moth
-from behaviors.idle import IdleBehavior
-from behaviors.blink import BlinkBehavior
-from behaviors.sleep import SleepBehavior
 
 
 running = True
 SCALE = 0.15  
-
+animations = {
+    "idle_primary_default": 7,
+    "idle_primary_blink": 7,
+    "idle_primary_sleepy": 14,
+}
 
 # ===============================
 # LOAD FRAMES
@@ -37,7 +37,7 @@ def load_frames(folder):
 
             img = pygame.image.load(path).convert_alpha()
 
-            # SCALE IMAGE
+            # ⭐ SCALE IMAGE
             w = int(img.get_width() * SCALE)
             h = int(img.get_height() * SCALE)
             img = pygame.transform.smoothscale(img, (w, h))
@@ -55,10 +55,10 @@ def companion():
     pygame.display.set_icon(pygame.image.load("icon.png"))
     pygame.init()
     
-    # Create a temporary window
+    # 🟢 STEP 1 — Create a temporary window FIRST
     screen = pygame.display.set_mode((1, 1), pygame.NOFRAME)
 
-    # Load images
+    # 🟢 STEP 2 — Now loading images is safe
     idle_primary_default = load_frames("assets/moth-idle-default-clear")
     idle_primary_blink = load_frames("assets/moth-idle-blink-clear")
     idle_primary_sleepy = load_frames("assets/moth-idle-sleepy-clear")
@@ -94,10 +94,11 @@ def companion():
     win32gui.SetLayeredWindowAttributes(
         hwnd, win32api.RGB(0, 0, 0), 0, win32con.LWA_COLORKEY
     )
-    # Show window once ready
+    # 👁️ Show window once ready
     win32gui.ShowWindow(hwnd, win32con.SW_SHOW)
 
     current_anim = "idle_primary_default"
+    current_secondary_anim = ""
     secondary_frames = ""
     secondary_particles = []
     frame_index = 0
@@ -110,34 +111,42 @@ def companion():
         SPI_GETWORKAREA, 0, ctypes.byref(rect), 0
     )
 
-    # Create moth
-    moth = Moth()
-
-    # Add behaviors
-    moth.controller.add("idle", IdleBehavior(moth, idle_primary_default))
-    moth.controller.add("blink", BlinkBehavior(moth, idle_primary_blink))
-    moth.controller.add("sleep", SleepBehavior(moth, idle_primary_sleep))
-    moth.controller.add("sleep_in", SleepBehavior(moth, idle_primary_sleep_in))
-    moth.controller.add("sleepy", SleepBehavior(moth, idle_primary_sleepy))
-    moth.controller.set("idle")
-
-
    
     right = rect.right
     bottom = rect.bottom
     x, y = right-sprite_width, bottom-sprite_height + 45
+    moth = PixelSprite(pos=(0, 0))
 
     clock = pygame.time.Clock()
+    double_blink = False
+    last_click_time = pygame.time.get_ticks()
+    left_pressed = win32api.GetAsyncKeyState(win32con.VK_LBUTTON) < 0
+    sleepy_count = 0
+    asleep = False
     while running:
+        mouse_x, mouse_y = win32api.GetCursorPos()
+
+        over_sprite = (
+            x <= mouse_x <= x + sprite_width and
+            y <= mouse_y <= y + sprite_height
+        )
+        left_pressed = win32api.GetAsyncKeyState(win32con.VK_LBUTTON) < 0
+        if over_sprite and left_pressed:
+            
+            if current_anim == "idle_primary_sleep" and asleep :
+                print("clicked")
+                current_anim = "idle_primary_default"
+                frame_index = 0    
+                asleep = False
+            last_click_time = pygame.time.get_ticks()
+
+        time_since_click = pygame.time.get_ticks() - last_click_time
         
 
         
-
-        dt = clock.tick(60) / 1000
-        
+        # ⭐ PROCESS EVENTS (prevents freezing)
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
+            pass
         if current_anim == "idle_primary_default":
             frames = idle_primary_default 
         elif current_anim == "idle_primary_blink":
@@ -148,6 +157,7 @@ def companion():
             frame_speed = 0.08
             frames = idle_primary_sleep_in
         elif current_anim == "idle_primary_sleep":
+            asleep = True
             frames = idle_primary_sleep
             if random.random() < 0.008 and len(secondary_particles) < 3:  # spawn chance per frame
                 secondary_particles.append({
@@ -176,10 +186,47 @@ def companion():
 
             # ⭐ Update sine phase
             s["wave_offset"] += s["wave_speed"]
-        
-        
+        frame_index += frame_speed
+        if frame_index >= len(frames):
+            frame_index = 0
 
-        
+            if current_anim == "idle_primary_default":
+                if time_since_click > 5000 - (sleepy_count * 2000): 
+                    current_anim = "idle_primary_sleepy"
+                    sleepy_count += 1
+                    last_click_time = pygame.time.get_ticks()
+                    if sleepy_count > 1:
+                        current_anim = "idle_primary_sleep_in"
+                        sleepy_count = 0
+                else:
+                    rand = random.random()
+                    if rand < 0.18:
+                        current_anim = "idle_primary_blink"
+                    elif rand < 0.2:
+                        current_anim = "idle_primary_sleepy"
+                        sleepy_count += 1
+                        last_click_time = pygame.time.get_ticks()
+                
+            elif current_anim == "idle_primary_blink":
+                if random.random() < 0.6 and not double_blink:  # 30% chance of double blink
+                    current_anim = "idle_primary_blink"
+                    double_blink = True
+                else:
+                    current_anim = "idle_primary_default"
+                    double_blink = False
+            elif current_anim == "idle_primary_sleepy":
+                current_anim = "idle_primary_default"
+            elif current_anim == "idle_primary_sleep_in":
+                current_anim = "idle_primary_sleep"
+                frames = idle_primary_sleep
+                frame_speed = 0.15
+            elif current_anim == "idle_primary_sleep":
+                current_anim == "idle_primary_sleep"
+            else:
+                current_anim = "idle_primary_default"
+
+        current_frame = frames[int(frame_index)]
+        moth.set_frame(current_frame)
         secondary_particles = [s for s in secondary_particles if s["alpha"] > 0]
 
         win32gui.SetWindowPos(
@@ -187,8 +234,6 @@ def companion():
         )
 
         screen.fill((0, 0, 0))
-        moth.update(screen)
-
         for s in secondary_particles:
             drift_x = s["base_x"] + math.sin(s["wave_offset"]) * s["amplitude"]
 
@@ -197,6 +242,7 @@ def companion():
 
             screen.blit(frame_img, (drift_x, s["y"]))
         # screen.blit(current_frame, (0, 0))
+        moth.draw(screen)
 
         pygame.display.update()
 

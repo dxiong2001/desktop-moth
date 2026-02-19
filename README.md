@@ -17,3 +17,10 @@ Honk honk! Welcome to your new desktop companion!
   - Has an idle sleep in animation for smoother transition
   - Moth remains in idle sleep state unless awoken by user or after [x] amount of time
   - While asleep, "zzz" animation will play alongside moth
+
+### Next Steps
+
+- Click interactions
+  - Honk
+  - Drag
+  - Follow/avoid mouse

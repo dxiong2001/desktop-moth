@@ -17,7 +17,9 @@ from behaviors.blink import BlinkBehavior
 from behaviors.sleep import SleepBehavior
 from behaviors.sleepy import SleepyBehavior
 from behaviors.sleep_transition import SleepTransitionBehavior
+from behaviors.honk import HonkBehavior
 from affects.sleep_z import SleepZBehavior
+from affects.honk_glow import HonkGlowBehavior
 
 
 running = True
@@ -62,19 +64,22 @@ def companion():
     screen = pygame.display.set_mode((1, 1), pygame.NOFRAME)
 
     # Load images
-    idle_primary_default = load_frames("assets/moth-idle-default-clear")
-    idle_primary_blink = load_frames("assets/moth-idle-blink-clear")
-    idle_primary_sleepy = load_frames("assets/moth-idle-sleepy-clear")
-    idle_primary_sleep_in = load_frames("assets/moth-idle-sleep-in-clear")
-    idle_primary_sleep = load_frames("assets/moth-idle-sleep-clear")
+    idle_primary_default = load_frames("assets/idle/moth-idle-default-clear")
+    idle_primary_blink = load_frames("assets/idle/moth-idle-blink-clear")
+    idle_primary_sleepy = load_frames("assets/idle/moth-idle-sleepy-clear")
+    idle_primary_sleep_in = load_frames("assets/idle/moth-idle-sleep-in-clear")
+    idle_primary_sleep = load_frames("assets/idle/moth-idle-sleep-clear")
+
+    interaction_honk = load_frames("assets/interactions/moth-interaction-honk-clear")
 
     idle_secondary_sleep_z = load_frames("assets/secondary/moth-idle-sleep-z-clear")
+    interaction_honk_glow = load_frames("assets/secondary/moth-interaction-honk-glow-clear")
     # Resize window to sprite size
     sprite_width = idle_primary_default[0].get_width()
     sprite_height = idle_primary_default[0].get_height()
 
     screen = pygame.display.set_mode(
-        (sprite_width, sprite_height), pygame.NOFRAME
+        (sprite_width, sprite_height+400), pygame.NOFRAME
     )
 
     hwnd = pygame.display.get_wm_info()["window"]
@@ -114,7 +119,8 @@ def companion():
     )
 
     # Create moth
-    moth = Moth()
+    print(sprite_height)
+    moth = Moth(sprite_width, sprite_height)
 
     # Add behaviors
     moth.controller.add("idle", IdleBehavior(moth, idle_primary_default))
@@ -122,7 +128,11 @@ def companion():
     moth.controller.add("sleep", SleepBehavior(moth, idle_primary_sleep))
     moth.controller.add("sleep_transition", SleepTransitionBehavior(moth, idle_primary_sleep_in))
     moth.controller.add("sleepy", SleepyBehavior(moth, idle_primary_sleepy))
+    
+    moth.controller.add("honk", HonkBehavior(moth, interaction_honk))
+
     moth.controller.add_affect("sleep_z", SleepZBehavior(moth, idle_secondary_sleep_z))
+    moth.controller.add_affect("honk_glow", HonkGlowBehavior(moth, interaction_honk_glow))
     moth.controller.set("idle")
 
 
@@ -133,67 +143,22 @@ def companion():
 
     clock = pygame.time.Clock()
     while running:
-        
-
-        
 
         dt = clock.tick(60) / 1000
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        if current_anim == "idle_primary_default":
-            frames = idle_primary_default 
-        elif current_anim == "idle_primary_blink":
-            frames = idle_primary_blink
-        elif current_anim == "idle_primary_sleepy":
-            frames = idle_primary_sleepy
-        elif current_anim == "idle_primary_sleep_in":
-            frame_speed = 0.08
-            frames = idle_primary_sleep_in
-        elif current_anim == "idle_primary_sleep":
-            frames = idle_primary_sleep
-            if random.random() < 0.008 and len(secondary_particles) < 3:  # spawn chance per frame
-                secondary_particles.append({
-                    "base_x":  -35 + sprite_width // 2,
-                    "y": 5,
-                    "vy": -0.4,
-
-                    "alpha": 255,
-
-                    "frame": 0,
-                    "frame_speed": random.uniform(0.1, 0.25),
-
-                    "wave_offset": random.uniform(0, 6.28),  # start phase
-                    "wave_speed": random.uniform(0.03, 0.06),
-                    "amplitude": random.uniform(6, 14)
-                })
-                secondary_frames = idle_secondary_sleep_z
-        for s in secondary_particles:
-            s["y"] += s["vy"]
-            s["alpha"] -= 3
-
-            # Animate frame
-            s["frame"] += s["frame_speed"]
-            if s["frame"] >= len(secondary_frames):
-                s["frame"] = 0
-
-            # ⭐ Update sine phase
-            s["wave_offset"] += s["wave_speed"]
-            
-        
-
         
         secondary_particles = [s for s in secondary_particles if s["alpha"] > 0]
 
         win32gui.SetWindowPos(
-            hwnd, win32con.HWND_TOPMOST, x, y, 0, 0, win32con.SWP_NOSIZE
+            hwnd, win32con.HWND_TOPMOST, x, y-200, 0, 0, win32con.SWP_NOSIZE
         )
 
         screen.fill((0, 0, 0))
         moth.update(dt, screen)
 
-        # screen.blit(current_frame, (0, 0))
 
         pygame.display.update()
 

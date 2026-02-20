@@ -11,9 +11,7 @@ class SleepZBehavior(Behavior):
                     "base_x":  80,
                     "y": 0,
                     "vy": -0.4,
-
                     "alpha": 255,
-
                     "frame": 0,
                     "frame_speed": random.uniform(0.1, 0.25),
                     "wave_offset": random.uniform(0, 6.28),  # start phase
@@ -34,7 +32,7 @@ class SleepZBehavior(Behavior):
         self.moth.controller.secondary_particles = [s for s in self.moth.controller.secondary_particles if s["alpha"] > 0]
 
     def exit(self):
-        self.moth.controller.set_affect("")
+        self.moth.controller.secondary_particles = []
         
 
 

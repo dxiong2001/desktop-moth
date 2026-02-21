@@ -42,11 +42,6 @@ def load_frames(folder):
 
             img = pygame.image.load(path).convert_alpha()
 
-            # SCALE IMAGE
-            w = int(img.get_width() * SCALE)
-            h = int(img.get_height() * SCALE)
-            img = pygame.transform.smoothscale(img, (w, h))
-
             frames.append(img)
 
     return frames
@@ -55,6 +50,8 @@ def load_frames(folder):
 # ===============================
 # COMPANION WINDOW
 # ===============================
+
+
 def companion():
     global running
     pygame.display.set_icon(pygame.image.load("icon.png"))
@@ -139,7 +136,7 @@ def companion():
    
     right = rect.right
     bottom = rect.bottom
-    x, y = right-sprite_width, bottom-sprite_height + 45
+    x, y = right-sprite_width, bottom-sprite_height + 38
 
     clock = pygame.time.Clock()
     while running:

@@ -16,7 +16,7 @@ class PixelSprite:
 
     def draw(self, screen):
         if self.frame:
-            screen.blit(self.frame, (self.x, self.y))
+            screen.blit(self.frame, (self.x, self.y), special_flags = pygame.BLEND_PREMULTIPLIED)
 
     def fade_surface(self, sprite, alpha):
         faded = sprite.copy()

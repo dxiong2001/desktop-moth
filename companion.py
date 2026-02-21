@@ -24,7 +24,7 @@ from affects.honk_glow import HonkGlowBehavior
 
 running = True
 SCALE = 0.15  
-
+clear_surface = pygame.Surface((400, 400), pygame.SRCALPHA)
 
 # ===============================
 # LOAD FRAMES
@@ -144,7 +144,7 @@ def companion():
     clock = pygame.time.Clock()
     while running:
 
-        dt = clock.tick(60) / 1000
+        dt = clock.tick(36) / 1000
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -155,14 +155,12 @@ def companion():
         win32gui.SetWindowPos(
             hwnd, win32con.HWND_TOPMOST, x, y-200, 0, 0, win32con.SWP_NOSIZE
         )
-
-        screen.fill((0, 0, 0))
+        screen.fill((0, 0, 0, 0))  # RGBA with alpha=0
         moth.update(dt, screen)
 
 
         pygame.display.update()
 
-        clock.tick(60)
 
     pygame.quit()
 

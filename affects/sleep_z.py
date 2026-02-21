@@ -9,7 +9,7 @@ class SleepZBehavior(Behavior):
         if random.random() < 0.008 and len(self.moth.controller.secondary_particles) < 3:
             self.moth.controller.secondary_particles.append({
                     "base_x":  80,
-                    "y": 0,
+                    "y": 200,
                     "vy": -0.4,
                     "alpha": 255,
                     "frame": 0,

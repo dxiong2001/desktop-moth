@@ -1,6 +1,7 @@
 from moth.sprite import PixelSprite
 import win32gui, win32con, win32api
 import math
+import pygame
 
 class MothController:
     def __init__(self, moth, frame_index = 0, frame_speed = 0.22):
@@ -37,7 +38,6 @@ class MothController:
             for s in self.secondary_particles:
                 drift_x = s["base_x"] + math.sin(s["wave_offset"]) * s["amplitude"]
                 frame_img = self.current_affect.frames[int(s["frame"])].copy()
-                frame_img.set_alpha(s["alpha"])
                 screen.blit(frame_img, (drift_x, s["y"]))
         if self.current:
 

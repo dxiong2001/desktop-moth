@@ -18,6 +18,16 @@ class PixelSprite:
         if self.frame:
             screen.blit(self.frame, (self.x, self.y))
 
+    def fade_surface(self, sprite, alpha):
+        faded = sprite.copy()
+
+        # Directly scale alpha channel
+        arr = pygame.surfarray.pixels_alpha(faded)
+        arr[:] = alpha
+        del arr  # unlock the surface
+
+        return faded
+    
     def is_click_inside(self):
         """Pixel-perfect click detection."""
         if not self.frame or not self.mask:

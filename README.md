@@ -18,6 +18,12 @@ Honk honk! Welcome to your new desktop companion!
   - Moth remains in idle sleep state unless awoken by user or after [x] amount of time
   - While asleep, "zzz" animation will play alongside moth
 
+### Interactions
+
+- Honk (short): moth will do a call on a user's short press
+- Honk (long): moth will do a long call on a user's long press
+- Walk: follows the user's cursor
+
 ### Next Steps
 
 - Click interactions
